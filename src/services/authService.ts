@@ -12,6 +12,7 @@ export const authService = {
     password: string
     fullName: string
     phoneNumber?: string
+    role?: string
   }): Promise<AuthResponse> {
     const res = await api.post<ApiResponse<AuthResponse>>('/auth/register', data)
     return res.data.data

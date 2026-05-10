@@ -22,7 +22,6 @@ export const adminService = {
     const res = await api.post(`/admin/customers/${id}/extend`, null, { params: { days } })
     return res.data
   },
-
   // Prompt Versions
   async listVersions(promptType: string): Promise<ApiResponse<PromptVersionResponse[]>> {
     const res = await api.get(`/admin/prompts/${promptType}/versions`)
@@ -54,4 +53,5 @@ export const adminService = {
     const res = await api.patch(`/admin/question-bank/${id}/verify`, { answer })
     return res.data
   },
+  
 }

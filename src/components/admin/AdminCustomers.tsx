@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
-import { RefreshCw, Loader2, CheckCircle, XCircle, Plus } from 'lucide-react'
+import { RefreshCw, Loader2, CheckCircle, XCircle, Plus, UserPlus, Eye, EyeOff } from 'lucide-react'
 import { adminService } from '../../services/adminService'
 import type { CustomerResponse, Page } from '../../types'
 import { format } from 'date-fns'
 import toast from 'react-hot-toast'
+import { authService } from '../../services/authService'
+
 
 export default function AdminCustomers() {
   const [data, setData] = useState<Page<CustomerResponse> | null>(null)
@@ -12,6 +14,35 @@ export default function AdminCustomers() {
   const [extendModal, setExtendModal] = useState<{ id: number; email: string } | null>(null)
   const [days, setDays] = useState(30)
   const [extendFocused, setExtendFocused] = useState(false)
+  const [createModal, setCreateModal] = useState(false)
+  const [createForm, setCreateForm] = useState({ email: '', password: '', fullName: '', phoneNumber: '', role: 'CUSTOMER' })
+  const [createFocused, setCreateFocused] = useState<string | null>(null)
+  const [showCreatePass, setShowCreatePass] = useState(false)
+  const [creating, setCreating] = useState(false)
+
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (createForm.password.length < 8) return toast.error('Mật khẩu ít nhất 8 ký tự')
+    setCreating(true)
+    try {
+      await authService.register(createForm)
+      toast.success('Tạo tài khoản thành công')
+      setCreateModal(false)
+      setCreateForm({ email: '', password: '', fullName: '', phoneNumber: '', role: 'CUSTOMER' })
+      load()
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || 'Lỗi tạo tài khoản')
+    } finally {
+      setCreating(false)
+    }
+  }
+
+  const cStyle = (f: string) => ({
+    background: 'var(--surface2)',
+    border: `1px solid ${createFocused === f ? 'var(--acid)' : 'var(--border)'}`,
+    color: 'var(--text)',
+    transition: 'border-color 0.15s',
+  })
 
   const load = async () => {
     setLoading(true)
@@ -57,10 +88,19 @@ export default function AdminCustomers() {
           <h1 className="font-display text-2xl font-700 mb-1">Khách hàng</h1>
           <p className="text-sm" style={{ color: 'var(--text-muted)' }}>{data?.totalElements ?? 0} tài khoản</p>
         </div>
-        <button onClick={load} className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm"
-          style={{ background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text-muted)' }}>
-          <RefreshCw size={14} className={loading ? 'animate-spin' : ''} /> Làm mới
-        </button>
+        <div className="flex gap-3">
+          <button
+            onClick={() => setCreateModal(true)}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-500"
+            style={{ background: 'rgba(200,245,60,0.12)', color: 'var(--acid)' }}
+          >
+            <UserPlus size={14} /> Tạo tài khoản
+          </button>
+          <button onClick={load} className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm transition-all"
+            style={{ background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text-muted)' }}>
+            <RefreshCw size={14} className={loading ? 'animate-spin' : ''} /> Làm mới
+          </button>
+        </div>
       </div>
 
       <div className="surface rounded-2xl overflow-hidden">
@@ -194,6 +234,76 @@ export default function AdminCustomers() {
           </div>
         </div>
       )}
+
+      {createModal && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 p-4"
+          style={{ background: 'rgba(0,0,0,0.7)' }}>
+          <div className="surface rounded-2xl p-6 w-full max-w-md animate-slide-up">
+            <h2 className="font-display font-600 text-lg mb-5">Tạo tài khoản mới</h2>
+            <form onSubmit={handleCreate} className="space-y-4">
+              {([
+                { k: 'fullName', label: 'Họ và tên', type: 'text', placeholder: 'Nguyễn Văn A' },
+                { k: 'email', label: 'Email', type: 'email', placeholder: 'user@example.com' },
+                { k: 'phoneNumber', label: 'Số điện thoại (tuỳ chọn)', type: 'tel', placeholder: '09xxxxxxxx' },
+              ] as const).map(({ k, label, type, placeholder }) => (
+                <div key={k}>
+                  <label className="block text-xs mb-1.5 uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>{label}</label>
+                  <input type={type} value={createForm[k]}
+                    onChange={(e) => setCreateForm(f => ({ ...f, [k]: e.target.value }))}
+                    placeholder={placeholder} required={k !== 'phoneNumber'}
+                    className="w-full px-3 py-2.5 rounded-xl text-sm outline-none"
+                    style={cStyle(k)}
+                    onFocus={() => setCreateFocused(k)} onBlur={() => setCreateFocused(null)} />
+                </div>
+              ))}
+
+              <div>
+                <label className="block text-xs mb-1.5 uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Mật khẩu</label>
+                <div className="relative">
+                  <input type={showCreatePass ? 'text' : 'password'} value={createForm.password}
+                    onChange={(e) => setCreateForm(f => ({ ...f, password: e.target.value }))}
+                    placeholder="Ít nhất 8 ký tự" required
+                    className="w-full px-3 py-2.5 pr-10 rounded-xl text-sm outline-none"
+                    style={cStyle('password')}
+                    onFocus={() => setCreateFocused('password')} onBlur={() => setCreateFocused(null)} />
+                  <button type="button" onClick={() => setShowCreatePass(v => !v)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-muted)' }}>
+                    {showCreatePass ? <EyeOff size={15} /> : <Eye size={15} />}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs mb-1.5 uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Role</label>
+                <select value={createForm.role}
+                  onChange={(e) => setCreateForm(f => ({ ...f, role: e.target.value }))}
+                  className="w-full px-3 py-2.5 rounded-xl text-sm outline-none"
+                  style={cStyle('role')}
+                  onFocus={() => setCreateFocused('role')} onBlur={() => setCreateFocused(null)}>
+                  <option value="CUSTOMER">CUSTOMER</option>
+                  <option value="ADMIN">ADMIN</option>
+                </select>
+              </div>
+
+              <div className="flex gap-3 pt-1">
+                <button type="button" onClick={() => setCreateModal(false)}
+                  className="flex-1 py-2.5 rounded-xl text-sm"
+                  style={{ background: 'var(--surface2)', color: 'var(--text-muted)' }}>
+                  Huỷ
+                </button>
+                <button type="submit" disabled={creating}
+                  className="flex-1 py-2.5 rounded-xl text-sm font-600 flex items-center justify-center gap-2 disabled:opacity-50"
+                  style={{ background: 'var(--acid)', color: '#0D0D0D' }}>
+                  {creating ? <Loader2 size={14} className="animate-spin" /> : <UserPlus size={14} />}
+                  Tạo tài khoản
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
+
+
   )
 }
