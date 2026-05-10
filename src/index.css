@@ -44,7 +44,6 @@ body::before {
 
 #root {
   position: relative;
-  z-index: 1;
 }
 
 ::-webkit-scrollbar {
