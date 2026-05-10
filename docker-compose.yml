@@ -3,6 +3,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: https://api.fs-wms.io.vn/api
     container_name: exam_solver_frontend
     restart: unless-stopped
     networks:
