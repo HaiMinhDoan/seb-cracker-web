@@ -61,7 +61,8 @@ export default function SolvePage() {
         if (
           job.status === 'DONE' ||
           job.status === 'FAILED' ||
-          job.status === 'SKIPPED'
+          job.status === 'SKIPPED' ||
+          job.status === 'WAITING_HUMAN'
         ) {
           setResult(job)
           setPolling(false)
@@ -107,9 +108,9 @@ export default function SolvePage() {
         captured_at: new Date().toISOString().slice(0, 19),
       }
       const job = await solveService.submitQuestion(payload)
-      setJobId(job.job_id)
+      setJobId(job.jobId)
       toast.success('Câu hỏi đã được gửi, đang xử lý...')
-      pollResult(job.job_id)
+      pollResult(job.jobId)
     } catch (err: any) {
       toast.error(err?.response?.data?.message || 'Lỗi gửi câu hỏi')
     } finally {

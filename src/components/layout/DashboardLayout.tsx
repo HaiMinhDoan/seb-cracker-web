@@ -1,7 +1,7 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom'
 import {
   Zap, BookOpen, Clock, Users, FileText, Database,
-  LogOut, User, ChevronRight, Shield
+  LogOut, User, Shield, PenLine
 } from 'lucide-react'
 import { useAuthStore } from '../../store/authStore'
 import toast from 'react-hot-toast'
@@ -11,6 +11,7 @@ const navItems = [
   { to: '/solve', icon: Zap, label: 'Giải bài' },
   { to: '/jobs', icon: Clock, label: 'Lịch sử jobs' },
   { to: '/sessions', icon: BookOpen, label: 'Phiên thi' },
+  { to: '/human', icon: PenLine, label: 'Tự giải' },
   { to: '/profile', icon: User, label: 'Hồ sơ' },
 ]
 
@@ -105,10 +106,10 @@ export default function DashboardLayout() {
             style={{ background: 'var(--surface2)' }}>
             <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-600 flex-shrink-0"
               style={{ background: 'var(--acid)', color: '#0D0D0D' }}>
-              {user?.full_name?.charAt(0)?.toUpperCase() || 'U'}
+              {user?.fullName?.charAt(0)?.toUpperCase() || 'U'}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-500 truncate">{user?.full_name}</p>
+              <p className="text-xs font-500 truncate">{user?.fullName}</p>
               <p className="text-xs truncate" style={{ color: 'var(--text-muted)' }}>{user?.email}</p>
             </div>
           </div>

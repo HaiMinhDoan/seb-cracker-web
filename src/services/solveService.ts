@@ -1,5 +1,5 @@
 import api from './api'
-import type { JobSubmittedResponse, JobStatusResponse, Page } from '../types'
+import type { JobSubmittedResponse, JobStatusResponse, ApiResponse, Page } from '../types'
 
 export const solveService = {
   async submitQuestion(data: object): Promise<JobSubmittedResponse> {
@@ -12,7 +12,7 @@ export const solveService = {
     return res.data
   },
 
-  async getMyJobs(status?: string, page = 0, size = 20): Promise<{ data: Page<JobStatusResponse> }> {
+  async getMyJobs(status?: string, page = 0, size = 20): Promise<ApiResponse<Page<JobStatusResponse>>> {
     const res = await api.get('/jobs/my', {
       params: { status, page, size, sort: 'createdAt,desc' },
     })

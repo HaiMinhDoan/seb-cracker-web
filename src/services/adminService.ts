@@ -14,6 +14,16 @@ export const adminService = {
     const res = await api.get(`/admin/customers/${id}`)
     return res.data
   },
+  async createCustomer(data: {
+    email: string
+    password: string
+    fullName: string
+    phoneNumber?: string
+    role?: string
+  }): Promise<ApiResponse<CustomerResponse>> {
+    const res = await api.post('/admin/customers', data)
+    return res.data
+  },
   async updateCustomer(id: number, data: CustomerUpdateRequest): Promise<ApiResponse<CustomerResponse>> {
     const res = await api.patch(`/admin/customers/${id}`, data)
     return res.data
@@ -22,6 +32,7 @@ export const adminService = {
     const res = await api.post(`/admin/customers/${id}/extend`, null, { params: { days } })
     return res.data
   },
+
   // Prompt Versions
   async listVersions(promptType: string): Promise<ApiResponse<PromptVersionResponse[]>> {
     const res = await api.get(`/admin/prompts/${promptType}/versions`)
@@ -53,5 +64,4 @@ export const adminService = {
     const res = await api.patch(`/admin/question-bank/${id}/verify`, { answer })
     return res.data
   },
-  
 }

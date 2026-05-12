@@ -120,7 +120,7 @@ export default function AdminQuestionBank() {
                       </span>
                     </td>
                     <td className="px-4 py-3 max-w-[200px]">
-                      <p className="text-sm truncate" title={q.originalText}>{q.originalText}</p>
+                      <p className="text-sm truncate" title={q.questionText}>{q.questionText}</p>
                     </td>
                     <td className="px-4 py-3">
                       {editingId === q.id ? (
@@ -146,7 +146,7 @@ export default function AdminQuestionBank() {
                       <span className="text-xs font-mono" style={{ color: 'var(--text-muted)' }}>{q.hitCount}</span>
                     </td>
                     <td className="px-4 py-3">
-                      {q.verified
+                      {q.isVerified
                         ? <CheckCircle size={14} style={{ color: 'var(--acid)' }} />
                         : <span className="text-xs" style={{ color: 'var(--text-muted)' }}>—</span>}
                     </td>
@@ -173,7 +173,7 @@ export default function AdminQuestionBank() {
       {data && data.totalPages > 1 && (
         <div className="flex items-center justify-between mt-4">
           <span className="text-sm" style={{ color: 'var(--text-muted)' }}>
-            Trang {page + 1} / {data.totalPages}
+            Trang {data.number + 1} / {data.totalPages}
           </span>
           <div className="flex gap-2">
             <button onClick={() => setPage((p) => Math.max(0, p - 1))} disabled={data.first}

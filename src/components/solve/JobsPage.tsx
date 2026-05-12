@@ -1,20 +1,19 @@
 import { useEffect, useState } from 'react'
-import { Clock, CheckCircle, XCircle, SkipForward, Loader2, RefreshCw } from 'lucide-react'
+import { Clock, CheckCircle, XCircle, SkipForward, Loader2, RefreshCw, UserCheck } from 'lucide-react'
 import { solveService } from '../../services/solveService'
-import { useAuthStore } from '../../store/authStore'
 import type { JobStatusResponse, Page } from '../../types'
 import { format } from 'date-fns'
 
 const STATUS_CONFIG = {
-  DONE: { label: 'Hoàn thành', color: 'var(--acid)', bg: 'rgba(200,245,60,0.1)', icon: CheckCircle },
-  FAILED: { label: 'Thất bại', color: 'var(--ember)', bg: 'rgba(255,92,26,0.1)', icon: XCircle },
-  PENDING: { label: 'Chờ xử lý', color: 'var(--text-muted)', bg: 'var(--surface2)', icon: Clock },
-  PROCESSING: { label: 'Đang xử lý', color: 'var(--frost)', bg: 'rgba(26,255,228,0.1)', icon: Loader2 },
-  SKIPPED: { label: 'Bỏ qua', color: 'var(--text-muted)', bg: 'var(--surface2)', icon: SkipForward },
+  DONE:          { label: 'Hoàn thành',    color: 'var(--acid)',      bg: 'rgba(200,245,60,0.1)',  icon: CheckCircle },
+  FAILED:        { label: 'Thất bại',      color: 'var(--ember)',     bg: 'rgba(255,92,26,0.1)',   icon: XCircle },
+  PENDING:       { label: 'Chờ xử lý',    color: 'var(--text-muted)',bg: 'var(--surface2)',       icon: Clock },
+  PROCESSING:    { label: 'Đang xử lý',   color: 'var(--frost)',     bg: 'rgba(26,255,228,0.1)',  icon: Loader2 },
+  SKIPPED:       { label: 'Bỏ qua',       color: 'var(--text-muted)',bg: 'var(--surface2)',       icon: SkipForward },
+  WAITING_HUMAN: { label: 'Chờ tự giải',  color: '#F59E0B',          bg: 'rgba(245,158,11,0.1)',  icon: UserCheck },
 }
 
 export default function JobsPage() {
-  const user = useAuthStore((s) => s.user)
   const [data, setData] = useState<Page<JobStatusResponse> | null>(null)
   const [loading, setLoading] = useState(false)
   const [filter, setFilter] = useState('')
@@ -31,7 +30,7 @@ export default function JobsPage() {
 
   useEffect(() => { load() }, [filter, page])
 
-  const statuses = ['', 'DONE', 'PENDING', 'PROCESSING', 'FAILED', 'SKIPPED']
+  const statuses = ['', 'DONE', 'PENDING', 'PROCESSING', 'FAILED', 'SKIPPED', 'WAITING_HUMAN']
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
@@ -49,7 +48,6 @@ export default function JobsPage() {
         </button>
       </div>
 
-      {/* Filter */}
       <div className="flex gap-2 mb-5 flex-wrap">
         {statuses.map((s) => {
           const cfg = s ? STATUS_CONFIG[s as keyof typeof STATUS_CONFIG] : null
@@ -67,22 +65,19 @@ export default function JobsPage() {
         })}
       </div>
 
-      {/* Table */}
       <div className="surface rounded-2xl overflow-hidden">
         {loading ? (
           <div className="flex items-center justify-center py-16">
             <Loader2 size={24} className="animate-spin" style={{ color: 'var(--acid)' }} />
           </div>
         ) : data?.content.length === 0 ? (
-          <div className="text-center py-16" style={{ color: 'var(--text-muted)' }}>
-            Chưa có job nào
-          </div>
+          <div className="text-center py-16" style={{ color: 'var(--text-muted)' }}>Chưa có job nào</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr style={{ borderBottom: '1px solid var(--border)' }}>
-                  {['Job ID', 'Trạng thái', 'Câu hỏi', 'Đáp án', 'Nguồn', 'Thời gian', 'Ngày tạo'].map((h) => (
+                  {['Job ID', 'Trạng thái', 'Question ID', 'Đáp án', 'Nguồn', 'Thời gian', 'Ngày tạo'].map((h) => (
                     <th key={h} className="text-left px-4 py-3 text-xs font-500 uppercase tracking-wider"
                       style={{ color: 'var(--text-muted)' }}>{h}</th>
                   ))}
@@ -105,7 +100,7 @@ export default function JobsPage() {
                           {cfg.label}
                         </div>
                       </td>
-                      <td className="px-4 py-3 max-w-[200px]">
+                      <td className="px-4 py-3 max-w-[160px]">
                         <p className="text-sm truncate">{job.question_id}</p>
                       </td>
                       <td className="px-4 py-3">
@@ -137,23 +132,18 @@ export default function JobsPage() {
         )}
       </div>
 
-      {/* Pagination */}
       {data && data.totalPages > 1 && (
         <div className="flex items-center justify-between mt-4">
           <span className="text-sm" style={{ color: 'var(--text-muted)' }}>
             Trang {page + 1} / {data.totalPages}
           </span>
           <div className="flex gap-2">
-            <button onClick={() => setPage((p) => Math.max(0, p - 1))} disabled={data.first}
+            <button onClick={() => setPage((p) => Math.max(0, p - 1))} disabled={page === 0}
               className="px-3 py-1.5 rounded-lg text-sm transition-all disabled:opacity-40"
-              style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>
-              Trước
-            </button>
-            <button onClick={() => setPage((p) => p + 1)} disabled={data.last}
+              style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>Trước</button>
+            <button onClick={() => setPage((p) => p + 1)} disabled={data.totalPages <= page + 1}
               className="px-3 py-1.5 rounded-lg text-sm transition-all disabled:opacity-40"
-              style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>
-              Sau
-            </button>
+              style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>Sau</button>
           </div>
         </div>
       )}

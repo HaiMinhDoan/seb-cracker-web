@@ -1,70 +1,65 @@
-// Auth
-export interface AuthResponse {
-  token: string
-  email: string
-  role: string
-  full_name: string
-  ai_mode_enabled: boolean
-  access_expires_at?: string
-}
-
 export interface ApiResponse<T> {
   success: boolean
   message: string
   data: T
 }
 
+export interface Page<T> {
+  content: T[]
+  totalElements: number
+  totalPages: number
+  size: number
+  number: number
+  first: boolean
+  last: boolean
+  numberOfElements: number
+}
+// Auth
+export interface AuthResponse {
+  id: number
+  token: string
+  email: string
+  role: string
+  fullName: string
+}
+
 // Customer
 export interface CustomerResponse {
   id: number
   email: string
+  fullName: string
+  phoneNumber?: string
   role: string
-  active: boolean
-  full_name: string
-  phone_number?: string
-  ai_mode_enabled: boolean
-  access_expires_at?: string
-  created_at: string
+  aiModeEnabled: boolean
+  accessExpiresAt?: string
+  isActive: boolean
+  createdAt: string
 }
 
 export interface CustomerUpdateRequest {
-  access_expires_at?: string
-  ai_mode_enabled?: boolean
-  active?: boolean
+  fullName?: string
+  phoneNumber?: string
+  aiModeEnabled?: boolean
+  accessExpiresAt?: string
+  isActive?: boolean
 }
 
-// Solve / Job
-export interface SolveRequest {
-  session: {
-    email: string
-    exam_code: string
-    subject_code: string
-    device_id: string
-  }
-  question: {
-    number: string
-    text: string
-    options: { label: string; text: string }[]
-    question_type: string
-    screenshot_base64?: string
-  }
-  question_id: string
-  captured_at: string
-}
-
+// Job
 export interface JobSubmittedResponse {
+  jobId: number
   status: string
   message: string
-  job_id: number
-  question_id: string
 }
 
+export type JobStatus = 'PENDING' | 'PROCESSING' | 'DONE' | 'FAILED' | 'SKIPPED' | 'WAITING_HUMAN'
+export type AnswerSource = 'BANK' | 'AI' | 'HUMAN' | 'NONE'
+
 export interface JobStatusResponse {
-  status: string
-  answer?: string
   job_id: number
   question_id: string
-  answer_source?: string
+  status: JobStatus
+  answer?: string
+  answer_source?: AnswerSource
   auto_click: boolean
   error_message?: string
   processing_time_ms?: number
@@ -78,40 +73,53 @@ export interface ExamSessionResponse {
   exam_code: string
   subject_code: string
   device_id: string
+  pending_count?: number
   created_at: string
 }
 
 export interface QuestionRecordResponse {
-  id: number
+  questionNumber: string
+  questionText: string
+  questionType: string
   answer?: string
-  success: boolean
-  question_hash: string
+  answerSource: string
+  processingTimeMs?: number
+}
+
+// Human Solver
+export interface HumanJobDetail {
+  job_id: number
+  question_id: string
   question_number: string
-  question_type: string
   question_text: string
+  question_type: string
+  options: { label: string; text: string }[]
+  answer?: string
+  status: JobStatus
   answer_source: string
-  processing_time_ms?: number
+  auto_click: string
   created_at: string
+  updated_at: string
 }
 
 // Prompt
 export interface PromptVersionResponse {
   id: number
+  promptType: string
+  versionNumber: number
+  versionLabel?: string
+  promptTemplate: string
+  isActive: boolean
+  createdBy: string
   notes?: string
-  prompt_type: string
-  version_number: number
-  version_label?: string
-  prompt_template: string
-  is_active: boolean
-  created_by: string
-  created_at: string
-  activated_at?: string
+  createdAt: string
+  activatedAt?: string
 }
 
 export interface PromptVersionRequest {
-  prompt_type: string
-  version_label?: string
-  prompt_template: string
+  promptType: string
+  versionLabel?: string
+  promptTemplate: string
   notes?: string
 }
 
@@ -119,26 +127,12 @@ export interface PromptVersionRequest {
 export interface QuestionBank {
   id: number
   questionHash: string
-  normalizedText: string
-  originalText: string
+  questionText: string
   questionType: 'SINGLECHOICE' | 'MULTIPLECHOICE' | 'TRUEFALSE' | 'ESSAY'
-  optionsJson: string
   answer: string
   subjectCode: string
   hitCount: number
-  verified: boolean
-  promptVersionId?: number
+  isVerified: boolean
+  options?: { label: string; text: string }[]
   createdAt: string
-  updatedAt: string
-}
-
-export interface Page<T> {
-  content: T[]
-  totalElements: number
-  totalPages: number
-  size: number
-  number: number
-  first: boolean
-  last: boolean
-  numberOfElements: number
 }

@@ -6,6 +6,7 @@ import RegisterPage from './components/auth/RegisterPage'
 import DashboardLayout from './components/layout/DashboardLayout'
 import SolvePage from './components/solve/SolvePage'
 import JobsPage from './components/solve/JobsPage'
+import HumanSolverPage from './components/solve/HumanSolverPage'
 import SessionsPage from './components/sessions/SessionsPage'
 import AdminCustomers from './components/admin/AdminCustomers'
 import AdminPrompts from './components/admin/AdminPrompts'
@@ -55,6 +56,7 @@ export default function App() {
           <Route index element={<Navigate to="/solve" replace />} />
           <Route path="solve" element={<SolvePage />} />
           <Route path="jobs" element={<JobsPage />} />
+          <Route path="human" element={<HumanSolverPage />} />
           <Route path="sessions" element={<SessionsPage />} />
           <Route path="profile" element={<ProfilePage />} />
           <Route
