@@ -1,5 +1,5 @@
 import api from './api'
-import type { ApiResponse, ExamSessionResponse, JobStatusResponse, HumanJobDetail, Page } from '../types'
+import type { ApiResponse, ExamSessionResponse, JobStatusResponse, HumanAnswerSubmit, HumanJobDetail, Page } from '../types'
 
 export const humanService = {
   async getSessions(page = 0, size = 20): Promise<ApiResponse<Page<ExamSessionResponse>>> {
@@ -20,5 +20,9 @@ export const humanService = {
   async submitAnswer(jobId: number, answer: string): Promise<ApiResponse<JobStatusResponse>> {
     const res = await api.post(`/human/jobs/${jobId}/answer`, { answer })
     return res.data
+  },
+
+  async submitAnswers(answers: HumanAnswerSubmit[]): Promise<ApiResponse<JobStatusResponse>[]> {
+    return Promise.all(answers.map((item) => this.submitAnswer(item.jobId, item.answer)))
   },
 }

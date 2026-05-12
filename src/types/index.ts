@@ -102,6 +102,11 @@ export interface HumanJobDetail {
   updated_at: string
 }
 
+export interface HumanAnswerSubmit {
+  jobId: number
+  answer: string
+}
+
 // Prompt
 export interface PromptVersionResponse {
   id: number
