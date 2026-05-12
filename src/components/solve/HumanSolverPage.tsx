@@ -398,7 +398,7 @@ export default function HumanSolverPage() {
         <div className="flex flex-wrap items-center gap-3">
           <div className="hidden items-center gap-2 rounded-lg border border-white/10 bg-white/[0.035] px-3 py-2 text-sm md:flex" style={{ color: '#B3B3B3' }}>
             <User size={15} />
-            <span className="max-w-44 truncate text-white/85">{user?.fullName || user?.email || 'Student'}</span>
+            <span className="max-w-44 truncate text-white/85">{user?.full_name || user?.email || 'Student'}</span>
           </div>
           <div className="flex items-center gap-2 rounded-lg border border-[#F1C40F]/20 bg-[#F1C40F]/10 px-3 py-2 font-mono text-sm font-700" style={{ color: '#F1C40F' }}>
             <Clock3 size={16} />

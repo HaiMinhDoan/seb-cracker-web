@@ -20,28 +20,26 @@ export interface AuthResponse {
   token: string
   email: string
   role: string
-  fullName: string
+  full_name: string
 }
 
 // Customer
 export interface CustomerResponse {
   id: number
   email: string
-  fullName: string
-  phoneNumber?: string
+  full_name: string
+  phone_number?: string
   role: string
-  aiModeEnabled: boolean
-  accessExpiresAt?: string
-  isActive: boolean
-  createdAt: string
+  active: boolean
+  ai_mode_enabled?: boolean
+  access_expires_at: string
+  created_at: string
 }
 
 export interface CustomerUpdateRequest {
-  fullName?: string
-  phoneNumber?: string
-  aiModeEnabled?: boolean
-  accessExpiresAt?: string
-  isActive?: boolean
+  access_expires_at?: string
+  ai_mode_enabled?: boolean
+  active?: boolean
 }
 
 // Job
@@ -78,12 +76,16 @@ export interface ExamSessionResponse {
 }
 
 export interface QuestionRecordResponse {
-  questionNumber: string
-  questionText: string
-  questionType: string
-  answer?: string
-  answerSource: string
-  processingTimeMs?: number
+  id: number
+  question_hash: string
+  question_number: string
+  question_type: string
+  question_text?: string
+  answer: string
+  answer_source?: string
+  success: boolean
+  processing_time_ms?: number
+  created_at: string
 }
 
 // Human Solver
@@ -110,34 +112,37 @@ export interface HumanAnswerSubmit {
 // Prompt
 export interface PromptVersionResponse {
   id: number
-  promptType: string
-  versionNumber: number
-  versionLabel?: string
-  promptTemplate: string
-  isActive: boolean
-  createdBy: string
+  prompt_type: string
+  version_number: number
+  version_label?: string
+  prompt_template: string
+  is_active: boolean
+  created_by: string
   notes?: string
-  createdAt: string
-  activatedAt?: string
+  created_at: string
+  activated_at?: string
 }
 
 export interface PromptVersionRequest {
-  promptType: string
-  versionLabel?: string
-  promptTemplate: string
+  prompt_type: string
+  version_label?: string
+  prompt_template: string
   notes?: string
 }
 
 // Question Bank
 export interface QuestionBank {
   id: number
-  questionHash: string
-  questionText: string
-  questionType: 'SINGLECHOICE' | 'MULTIPLECHOICE' | 'TRUEFALSE' | 'ESSAY'
-  answer: string
-  subjectCode: string
-  hitCount: number
-  isVerified: boolean
+  question_hash: string
+  normalized_text: string
+  original_text: string
+  question_type: 'SINGLECHOICE' | 'MULTIPLECHOICE' | 'TRUEFALSE' | 'ESSAY'
   options?: { label: string; text: string }[]
-  createdAt: string
+  answer: string
+  subject_code: string
+  hit_count: number
+  is_verified: boolean
+  prompt_version_id?: number
+  created_at: string
+  updated_at: string
 }

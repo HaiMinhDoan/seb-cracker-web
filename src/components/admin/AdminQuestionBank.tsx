@@ -116,11 +116,11 @@ export default function AdminQuestionBank() {
                     <td className="px-4 py-3">
                       <span className="text-xs font-mono px-1.5 py-0.5 rounded-md"
                         style={{ background: 'var(--surface2)', color: 'var(--frost)' }}>
-                        {q.questionType}
+                        {q.question_type}
                       </span>
                     </td>
                     <td className="px-4 py-3 max-w-[200px]">
-                      <p className="text-sm truncate" title={q.questionText}>{q.questionText}</p>
+                      <p className="text-sm truncate" title={q.normalized_text}>{q.original_text}</p>
                     </td>
                     <td className="px-4 py-3">
                       {editingId === q.id ? (
@@ -140,19 +140,19 @@ export default function AdminQuestionBank() {
                       )}
                     </td>
                     <td className="px-4 py-3">
-                      <span className="text-xs font-mono" style={{ color: 'var(--text-muted)' }}>{q.subjectCode}</span>
+                      <span className="text-xs font-mono" style={{ color: 'var(--text-muted)' }}>{q.subject_code}</span>
                     </td>
                     <td className="px-4 py-3">
-                      <span className="text-xs font-mono" style={{ color: 'var(--text-muted)' }}>{q.hitCount}</span>
+                      <span className="text-xs font-mono" style={{ color: 'var(--text-muted)' }}>{q.hit_count}</span>
                     </td>
                     <td className="px-4 py-3">
-                      {q.isVerified
+                      {q.is_verified
                         ? <CheckCircle size={14} style={{ color: 'var(--acid)' }} />
                         : <span className="text-xs" style={{ color: 'var(--text-muted)' }}>—</span>}
                     </td>
                     <td className="px-4 py-3">
                       <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
-                        {format(new Date(q.createdAt), 'dd/MM/yy')}
+                        {format(new Date(q.created_at), 'dd/MM/yy')}
                       </span>
                     </td>
                     <td className="px-4 py-3">
