@@ -14,10 +14,10 @@ export default function ProfilePage() {
         <div className="flex items-center gap-5">
           <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-2xl font-700 flex-shrink-0"
             style={{ background: 'var(--acid)', color: '#0D0D0D' }}>
-            {user.fullName?.charAt(0)?.toUpperCase() || 'U'}
+            {user.full_name?.charAt(0)?.toUpperCase() || 'U'}
           </div>
           <div>
-            <h2 className="font-display font-700 text-xl">{user.fullName}</h2>
+            <h2 className="font-display font-700 text-xl">{user.full_name}</h2>
             <p className="text-sm" style={{ color: 'var(--text-muted)' }}>{user.email}</p>
             <div className="flex items-center gap-2 mt-2">
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-500"
@@ -40,7 +40,7 @@ export default function ProfilePage() {
         <div className="space-y-4">
           {[
             { icon: Mail, label: 'Email', value: user.email },
-            { icon: User, label: 'Họ và tên', value: user.fullName },
+            { icon: User, label: 'Họ và tên', value: user.full_name },
             { icon: Shield, label: 'Vai trò', value: user.role },
           ].map(({ icon: Icon, label, value }) => (
             <div key={label} className="flex items-center gap-4">
