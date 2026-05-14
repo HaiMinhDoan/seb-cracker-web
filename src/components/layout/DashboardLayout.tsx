@@ -1,7 +1,8 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 import {
   Zap, BookOpen, Clock, Users, FileText, Database,
-  LogOut, User, Shield, PenLine
+  LogOut, User, Shield, PenLine, Menu, X
 } from 'lucide-react'
 import { useAuthStore } from '../../store/authStore'
 import toast from 'react-hot-toast'
@@ -24,6 +25,7 @@ const adminItems = [
 export default function DashboardLayout() {
   const { user, logout, isAdmin } = useAuthStore()
   const navigate = useNavigate()
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const handleLogout = () => {
     logout()
@@ -31,10 +33,24 @@ export default function DashboardLayout() {
     navigate('/login')
   }
 
+  const closeSidebar = () => setSidebarOpen(false)
+
   return (
     <div className="flex h-screen overflow-hidden">
+      {/* Mobile backdrop */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-30 md:hidden"
+          onClick={closeSidebar}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className="w-60 flex-shrink-0 flex flex-col border-r overflow-hidden"
+      <aside className={clsx(
+        'fixed md:static w-60 h-full md:h-auto flex-shrink-0 flex flex-col border-r overflow-hidden transition-transform duration-300 z-40',
+        'md:translate-x-0',
+        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+      )}
         style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
 
         {/* Logo */}
@@ -52,6 +68,7 @@ export default function DashboardLayout() {
             <NavLink
               key={to}
               to={to}
+              onClick={closeSidebar}
               className={({ isActive }) =>
                 clsx(
                   'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-400 transition-all group',
@@ -84,6 +101,7 @@ export default function DashboardLayout() {
                 <NavLink
                   key={to}
                   to={to}
+                  onClick={closeSidebar}
                   className={({ isActive }) =>
                     clsx('flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all')
                   }
@@ -123,8 +141,27 @@ export default function DashboardLayout() {
       </aside>
 
       {/* Main */}
-      <main className="flex-1 overflow-y-auto">
-        <Outlet />
+      <main className="flex-1 flex flex-col overflow-hidden">
+        {/* Mobile header */}
+        <div className="md:hidden flex items-center justify-between px-4 py-3 border-b"
+          style={{ borderColor: 'var(--border)' }}>
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="p-2 hover:opacity-80 transition-all"
+            style={{ color: 'var(--text-muted)' }}
+          >
+            {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+          <div className="w-6 h-6 rounded flex items-center justify-center acid-glow flex-shrink-0"
+            style={{ background: 'var(--acid)' }}>
+            <Zap size={14} className="text-black" />
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto">
+          <Outlet />
+        </div>
       </main>
     </div>
   )
